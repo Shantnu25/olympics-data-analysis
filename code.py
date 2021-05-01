@@ -1,135 +1,8 @@
-# --------------
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt 
 
-'''MY Code
-#Step 1 - Data Loading
-
-data=pd.read_csv(path)
-data=data.rename(columns={'Total':'Total_Medals'})
-print(data.head())
-print('-----------------------------------------------------')
-#Step 2 - Summer or Winter
-
-data['Better_Event']=np.where((data['Total_Summer']==data['Total_Winter']),'Both',(np.where((data['Total_Summer']>data['Total_Winter']),'Summer','Winter')))
-print(data['Better_Event'].head())
-
-better_event=data['Better_Event'].value_counts()
-print(better_event)
-
-#Step 3 - Top 10
-
-top_countries=data[['Country_Name','Total_Summer', 'Total_Winter','Total_Medals']]
-
-top_countries.drop(index=146,axis=0,inplace=True)
-
-def top_ten(df,para):
-    country_list=[]
-    top_10=df.nlargest(10,para)
-    country_list=list(top_10['Country_Name'])
-    return country_list
-
-top_10_summer=top_ten(top_countries,'Total_Summer')
-top_10_winter=top_ten(top_countries,'Total_Winter')
-top_10=top_ten(top_countries,'Total_Medals')
-
-common=[set(top_10_summer).intersection(set(top_10_winter), set(top_10))]
-print(common)
-print('------------------------------------')
-
-#Step 4 - Plotting Top 10
-
-summer_df=data[data['Country_Name'].isin(top_10_summer)]
-winter_df=data[data['Country_Name'].isin(top_10_winter)]
-top_df=data[data['Country_Name'].isin(top_10)]
-
-print(top_df)
-
-plt.figure(figsize=[12,7])
-plt.xlabel('Country Name')
-plt.ylabel('Total Summer Medals')
-plt.bar(summer_df['Country_Name'],summer_df['Total_Summer'])
-plt.show()
-
-plt.figure(figsize=[12,7])
-plt.xlabel('Country Name')
-plt.ylabel('Total Summer Medals')
-plt.bar(winter_df['Country_Name'],winter_df['Total_Winter'])
-plt.show()
-
-plt.figure(figsize=[12,7])
-plt.xlabel('Country Name')
-plt.ylabel('Total Medals')
-plt.bar(top_df['Country_Name'],top_df['Total_Medals'])
-plt.show()
-print('------------------------------------')
-
-#Step 5 - Top performing country(Gold)
-
-summer_df['Golden_Ratio']=summer_df['Gold_Summer']/summer_df['Total_Summer']
-
-summer_max_ratio=summer_df['Golden_Ratio'].max()
-print(summer_max_ratio)
-print('------------------------------------')
-
-summer_country_gold=summer_df['Country_Name'][summer_df['Golden_Ratio']==summer_max_ratio]
-print(summer_country_gold)
-print('------------------------------------')
-
-winter_df['Golden_Ratio']=winter_df['Gold_Winter']/winter_df['Total_Winter']
-
-winter_max_ratio=winter_df['Golden_Ratio'].max()
-print(winter_max_ratio)
-print('------------------------------------')
-
-winter_country_gold=winter_df['Country_Name'][winter_df['Golden_Ratio']==winter_max_ratio]
-print(winter_country_gold)
-print('------------------------------------')
-
-
-top_df['Golden_Ratio']=top_df['Gold_Total']/top_df['Total_Medals']
-
-top_max_ratio=top_df['Golden_Ratio'].max()
-print(top_max_ratio)
-print('------------------------------------')
-
-top_country_gold=str(top_df['Country_Name'][top_df['Golden_Ratio']==top_max_ratio].values)
-print(top_country_gold)
-print(type(top_country_gold))
-print('------------------------------------')
-print('------------------------------------')
-
-
-#Step 6 - Best in the world
-data.drop(index=146,axis=0,inplace=True)
-data_1=data
-
-data_1['Total_Points']=(3*data_1['Gold_Total'])+(2*data_1['Silver_Total'])+data_1['Bronze_Total']
-
-most_points=data_1['Total_Points'].max()
-print('------------------------------------')
-print(most_points)
-print('------------------------------------')
-best_country=data_1['Country_Name'][data_1['Total_Points']==most_points]
-print(best_country)
-print('------------------------------------')
-
-#Step 7 - Plot for the best
-best=data.iloc[best_country.index]
-best=best[['Gold_Total','Silver_Total','Bronze_Total']]
-print(best)
-
-
-best.plot.bar()
-plt.xlabel('United States')
-plt.ylabel('Medals Tally')
-plt.xticks(rotation=45)
-
-'''
-#My Code
-
-# Data Loading
+#1 Data Loading and column renaming
 
 #Reading the file
 data=pd.read_csv(path)
@@ -140,10 +13,15 @@ data.rename(columns={'Total':'Total_Medals'},inplace=True)
 #Printing the first five columns
 print(data.head(5))
 
-# Summer or Winter
+#2 Summer or Winter
+
+# Some Countries love Summer, some Winter. We think it has to do something with their Olympic performance.
+
+#Q: Figure out which olympic event does a country perform better in?
 
 #Creating new column 'Better_Event'
 data['Better_Event'] = np.where(data['Total_Summer'] > data['Total_Winter'] , 'Summer', 'Winter')
+
 data['Better_Event'] = np.where(data['Total_Summer'] == data['Total_Winter'] , 'Both', data['Better_Event'])
 
 #Finding the value with max count in 'Better_Event' column
@@ -152,7 +30,11 @@ better_event=data['Better_Event'].value_counts().index.values[0]
 #Printing the better event
 print('Better_Event=', better_event)
 
-# Top 10
+#3 Top 10
+
+#Q1: Which are the top 10 performing teams at summer event (with respect to total medals), winter event and overall?
+
+#Q2: How many teams are present in all of the three lists above?
 
 #Subsetting the dataframe
 top_countries=data[['Country_Name','Total_Summer', 'Total_Winter','Total_Medals']]
@@ -173,7 +55,6 @@ def top_ten(data, col):
     return country_list
 
 
-
 #Calling the function for Top 10 in Summer
 top_10_summer=top_ten(top_countries,'Total_Summer')
 print("Top 10 Summer:\n",top_10_summer, "\n")
@@ -191,7 +72,10 @@ common=list(set(top_10_summer) & set(top_10_winter) & set(top_10))
 
 print('Common Countries :\n', common, "\n")
 
-# Plotting Top 10
+#4 Plotting Top 10
+
+#From above lists, visualizing the medal count of the top 10 countries 
+
 #For Summer
 
 #Creating the dataframe for Summer event
@@ -230,7 +114,6 @@ plt.xlabel('Country Name')
 plt.ylabel('Total Medals')
 
 
-
 #For both the events
 
 #Creating the dataframe for both the events
@@ -249,7 +132,9 @@ plt.xlabel('Country Name')
 #Changing the y-axis label
 plt.ylabel('Total Medals')
 
-# Top Performing countries
+#5 Top Performing countries 
+
+#Q: Find out which country has had the best performance with respect to the ratio between gold medals won and total medals won.
 
 #For Summer List
 
@@ -294,7 +179,9 @@ top_country_gold=top_df.loc[top_df['Golden_Ratio'].idxmax(),'Country_Name']
 
 print("Top Country:", top_country_gold, " with a ratio of %.2f" %top_max_ratio )
 
-# Best in the world
+#6 Best in the world
+
+#Q: Winning Gold is great but is winning most gold equivalent to being the best overall performer? Let's find out.
 
 #Removing the last column of the dataframe
 data_1=data[:-1]
@@ -310,13 +197,18 @@ most_points=max(data_1['Total_Points'])
 best_country=data_1.loc[data_1['Total_Points'].idxmax(),'Country_Name']
 print('The maximum points achieved is ', most_points, ' by ', best_country )
 
-# Plot for the best
+#7 Plot for the best
+
+#We know which country is best when it comes to winning the most points in the Olympic Games. 
+
+#Let's plot the medal count to visualise their success better.
 
 #Subsetting the dataframe
 best=data[data['Country_Name']==best_country]
-best.reset_index(drop = True, inplace = True)
-best=best[['Gold_Total','Silver_Total','Bronze_Total']]
 
+best.reset_index(drop = True, inplace = True)
+
+best=best[['Gold_Total','Silver_Total','Bronze_Total']]
 
 #Plotting bar plot
 best.plot.bar(stacked=True)
@@ -332,15 +224,10 @@ plt.xticks(rotation=45)
 
 #Updating the graph legend
 l=plt.legend()
+
 l.get_texts()[0].set_text('Gold_Total :' + str(best['Gold_Total'].values))
+
 l.get_texts()[1].set_text('Silver_Total :' + str(best['Silver_Total'].values))
+
 l.get_texts()[2].set_text('Bronze_Total :' + str(best['Bronze_Total'].values))
-
-
-
-
-
-
-
-
 
